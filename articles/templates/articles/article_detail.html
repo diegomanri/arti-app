@@ -1,0 +1,101 @@
+{% extends "articles/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<div class="container">
+    <div class="top-bar">
+        <a href="{% url 'homepage' %}" class="btn btn-primary">HOME</a>
+    </div>
+
+    <!-- Article header -->
+    <div class="article-content-inner">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="article-header">
+                    <header>
+                        <div id="adv_text" class="adv-heading"></div>
+                        <h1>{{ article.headline }}</h1>
+                        <h2>{{ article.promo }}</h2>
+                    </header>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <main class="col-sm-7 col-md-8">
+                <div class="author-tagline author-inline">
+                    <div class="author-and-date">
+                        <div class="author-byline">
+                            {% for author in article.authors %}
+                            <div class="author-name">{{ author.byline }} </div>
+                            <div class="author-username">
+                                <a href="{{ author.links.self }}">{{ author.username }}</a>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="article-pub-date">
+                            <div class="publication-date">
+                                {{ article.publish_at|date:"F d, Y" }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Article body starts -->
+                <section class="article-body">
+                    <div class="article-content">
+                        {{ article.body|safe }}
+                        <div id="pitch">
+                            {{ article.pitch.text|safe }}
+                        </div>
+                    </div>
+                    <div class="article-disclosure">
+                        <p><em>{{ article.disclosure|safe }}</em></p>
+                    </div>
+                </section>
+            </main>
+            <!-- Quotebar -->
+            {% include "articles/quotebar.html" %}
+        </div>
+    </div>
+
+    <!-- List of comments -->
+
+    <div class="card mt-4 mb-4">
+        <div class="card-header">
+            <h2>Comments</h2>
+        </div>
+        <div class="card-body">
+            <div class="list-group">
+                {% for comment in comments %}
+                <div class="list-group-item list-group-item-action flex-column align-items-start">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">{{ comment.author_name }}</h5>
+                        <small>{{ comment.created_at|date:"N j, Y" }}</small>
+                        <p class="mb-1">{{ comment.comment }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Comment form -->
+    <div class="card mt-4 mb-4">
+        <div class="card-header">
+            <h2>Leave a Comment</h2>
+        </div>
+        <div class="card-body">
+            <p class="card-text">Want to join the discussion? Feel free to contribute!</p>
+            <form method="post" class="mt-4">
+                {% csrf_token %}
+                {{ comment_form|crispy }}
+                <!-- {{ comment_form.author_name|as_crispy_field }}
+            {{ comment_form.comment|as_crispy_field }} -->
+                <button type="submit" class="btn btn-primary">Submit Comment</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

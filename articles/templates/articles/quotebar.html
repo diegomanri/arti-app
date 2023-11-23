@@ -1,0 +1,57 @@
+{% load static %}
+
+<aside class="col-sm-5 col-md-4 p-l">
+    <section class="related-tickers">
+
+        <div class="block-title">
+            <hr>
+            <h2>Stonks</h2>
+        </div>
+        {% for quote in quotes %}
+        <div class="ticker-row">
+            <div class="ticker-item">
+                <span class="image-wrap">
+                    <a href="{{ quote.Website }}">
+                        <!-- Perhaps using an API like https://eodhd.com/financial-apis-blog/5000-company-logos/ would be best-->
+                        <!-- Or just TMF's CDN https://g.foolcdn.com/art/companylogos/mark/AMD.png -->
+                        <img src="https://g.foolcdn.com/art/companylogos/mark/{{ quote.Symbol }}.png"
+                            class="img-responsive" alt="">
+                    </a>
+                </span>
+                <h3>{{ quote.CompanyName }}</h3>
+                <h4>
+                    <span class="ticker">
+                        <!-- <a title="Apple Stock Quote" href="#"> -->
+                        {{ quote.Exchange }}:<span class="symbol">{{ quote.Symbol }}</span>
+                        </a>
+                    </span>
+                </h4>
+                <aside class="price-quote-container">
+                    <h4 class="current-price">
+                        ${{ quote.CurrentPrice.Amount }}
+                    </h4>
+                    <h4
+                        class="price-change-amount {% if quote.Change.Amount >= 0 %}price-pos{% else %}price-neg{% endif %}">
+                        ${{ quote.Change.Amount }}
+                    </h4>
+                    <h4
+                        class="price-change-percent {% if quote.PercentChange.Value >= 0 %}price-pos{% else %}price-neg{% endif %}">
+                        {{ quote.FormattedPercentChange }}
+                    </h4>
+                </aside>
+            </div>
+        </div>
+        {% endfor %}
+    </section>
+    <section class="read-more-section">
+        <div class="block-title">
+            <hr>
+            <h2>Latest headlines</h2>
+        </div>
+        <ul class="two-line-list">
+            {% for headline in headlines %}
+            <li><a href="{% url 'article' headline.uuid %}">{{ headline.headline }}</a></li>
+            {% endfor %}
+        </ul>
+    </section>
+</aside>

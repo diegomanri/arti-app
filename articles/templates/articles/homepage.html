@@ -1,0 +1,57 @@
+{% extends "articles/base.html" %}
+{% load static %}
+
+{% block content %}
+
+<div class="container content-inner">
+    <div class="main-col">
+        <section class="jumbo-card card">
+
+            <!-- Top article -->
+            <div class="card-image">
+                <a href="{% url 'article' top_article.uuid %}"><img src="{% static 'images/card.jpg' %}" alt=""
+                        class="img-responsive"></a>
+            </div>
+
+            <div class="card-elements">
+                <div class="card-header">
+                    <a href="{% url 'article' top_article.uuid %}">
+                        <h3>{{ top_article.headline }}</h3>
+                    </a>
+                    <p class="author">By {{ top_article.byline }} | {{ top_article.publish_at|date:"F d, Y" }} </p>
+                </div>
+                <div class="card-copy">
+                    <p>{{ top_article.promo }}</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Three other articles -->
+    <div class="cards row">
+        {% for article in other_articles %}
+        <div class="card">
+            <div class="card-image">
+                <a href="{% url 'article' article.uuid %}">
+                    <!-- Use forloop.counter to append the number to the card image filename -->
+                    <img src="{% static 'images/card-' %}{{ forloop.counter }}.jpg" alt="{{ article.headline }}">
+                </a>
+            </div>
+            <div class="card-elements">
+                <div class="card-header">
+                    <a href="{% url 'article' article.uuid %}">
+                        <h4>{{ article.headline }}</h4>
+                    </a>
+                    <!-- Author and a publish date -->
+                    <p class="author">By {{ article.byline }} | {{ article.publish_at|date:"F d, Y" }}</p>
+                </div>
+                <div class="card-copy">
+                    <p>{{ article.promo }}...</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}

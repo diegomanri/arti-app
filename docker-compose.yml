@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:latest
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: ${DB}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "5432:5432"
+
+  web:
+    build: .
+    #command: python manage.py runserver 0.0.0.0:8000
+    # Using the below command to use Django's web server
+    # command: pipenv run python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/app
+      - static_volume:/app/staticfiles
+    ports:
+      - "8000:8000"
+    environment:
+      - DJANGO_SETTINGS_MODULE=finarticles.settings.dev
+      - DATABASE_URL=${DATABASE_URL}
+    depends_on:
+      - db
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/conf:/etc/nginx/conf.d
+      - static_volume:/app/staticfiles
+      - ./nginx/logs:/var/log/nginx
+    depends_on:
+      - web
+
+volumes:
+  postgres_data:
+  static_volume:
