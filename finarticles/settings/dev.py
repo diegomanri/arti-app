@@ -1,4 +1,5 @@
 from .base import *
+import dj_database_url
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -15,6 +16,10 @@ SECRET_KEY = os.environ.get('DJANGO_DEV_KEY')
 #         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
 # }
+
+DATABASES = {
+    'default': dj_database_url.config(default=os.environ.get('DATABASE_URL'))
+}
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
@@ -45,3 +50,10 @@ LOGGING = {
         },
     },
 }
+
+ALLOWED_HOSTS = []
+
+# settings/base.py
+STATICFILES_DIRS = [BASE_DIR / 'static']
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATIC_URL = 'static/'

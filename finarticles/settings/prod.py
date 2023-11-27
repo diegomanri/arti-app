@@ -1,4 +1,8 @@
 from .base import *
+import dj_database_url
+import boto3
+from articles.helpers import get_secret, get_parameter
+
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
@@ -8,22 +12,21 @@ DEBUG = False
 
 ALLOWED_HOSTS = ['example.com']
 
-# Database
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': os.environ.get('DB_NAME'),
-#         'USER': os.environ.get('DB_USER'),
-#         'PASSWORD': os.environ.get('DB_PASSWORD'),
-#         'HOST': os.environ.get('DB_HOST'),
-#         'PORT': os.environ.get('DB_PORT'),
-#     }
-# }
-
 # Serving static files from S3
 STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
 AWS_S3_REGION_NAME = os.environ.get('AWS_S3_REGION_NAME')  # e.g., 'us-west-2'
+
+# Fetching database credentials
+db_username = get_parameter('rds_username')
+db_password = get_secret('rds_password')
+db_host = get_parameter('rds_host')
+db_name = get_parameter('rds_db_name')
+
+# Configure DATABASES setting
+DATABASES = {
+    'default': dj_database_url.config(default=f'postgres://{db_username}:{db_password}@{db_host}/{db_name}')
+}
 
 # Media files
 # MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

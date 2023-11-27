@@ -1,6 +1,8 @@
 .env
 __pycache__/
 .vscode/
-debug.log
 .DS_Store
 static/.DS_Store
+debug.log
+nginx/logs/access.log
+nginx/logs/error.log

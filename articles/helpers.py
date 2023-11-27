@@ -3,6 +3,8 @@ import os
 import random
 import logging
 import datetime
+import boto3
+from botocore.exceptions import NoCredentialsError
 from django.utils.timezone import make_aware
 logger = logging.getLogger(__name__)
 
@@ -122,3 +124,33 @@ def get_data_from_file(filename='content_api.json'):
     except Exception as e:
         logger.error(f"Error getting data from {filename}: {e}")
         return {}
+
+# AWS Secret and Param Store retrieval functions
+
+
+def get_secret(secret_name, region_name='us-east-1'):
+    """
+    Fetch secret from AWS Secrets Manager
+    """
+    client = boto3.client(
+        'secretsmanager', region_name)
+    try:
+        get_secret_value_response = client.get_secret_value(
+            SecretId=secret_name)
+    except NoCredentialsError:
+        return None
+    else:
+        return get_secret_value_response['SecretString']
+
+
+def get_parameter(param_name, region_name='us-east-1'):
+    """
+    Fetch parameter from AWS Parameter Store
+    """
+    client = boto3.client(
+        'ssm', region_name)
+    try:
+        parameter = client.get_parameter(Name=param_name, WithDecryption=True)
+        return parameter['Parameter']['Value']
+    except NoCredentialsError:
+        return None
