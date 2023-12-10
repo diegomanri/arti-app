@@ -1,6 +1,6 @@
 from .base import *
 import dj_database_url
-import boto3
+# import boto3
 from articles.helpers import get_secret, get_parameter
 
 

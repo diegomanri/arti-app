@@ -10,6 +10,8 @@ crispy-bootstrap4 = "*"
 psycopg2-binary = "*"
 dj-database-url = "*"
 gunicorn = "*"
+boto3 = "*"
+django-storages = "*"
 
 [dev-packages]
 

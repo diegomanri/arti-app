@@ -1,9 +1,9 @@
 name: Terraform Plan
 
 on:
-#   pull_request:
-#     branches:
-#       - main
+  #   pull_request:
+  #     branches:
+  #       - main
   workflow_dispatch:
 
 jobs:
@@ -12,24 +12,39 @@ jobs:
     environment: production
 
     env:
+      # Any environment variables prefixed with TF_VAR_ are automatically read as Terraform variables.
       TF_VAR_ghcr_token: ${{ secrets.GHCR_TOKEN }}
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-    - name: Set up AWS credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: us-east-1
+      - name: Set up AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
 
-    - name: Set up Terraform
-      uses: hashicorp/setup-terraform@v1
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
 
-    - name: Terraform Init
-      run: terraform init
+      # Ensure the repository has the variables below in place
+      # TODO, make sure env.TF_STATE_S3_BUCKET is the right way to reference the variable
+      # perhaps is with vars.VARIABLE_NAME
+      # https://docs.github.com/en/actions/learn-github-actions/variables#using-the-vars-context-to-access-configuration-variable-values
+      - name: Terraform Init
+        run: |
+          terraform init \
+            -backend-config="bucket=${{ env.TF_STATE_S3_BUCKET }}" \
+            -backend-config="dynamodb_table=${{ env.TF_STATE_DYNAMODB_TABLE }}" \
+            -backend-config="region=us-east-1"
 
-    - name: Terraform Plan
-      run: terraform plan
+      - name: Terraform Plan
+        id: plan
+        run: terraform plan
+
+        # Output the standard output, error output, and exit code of the Terraform plan step
+      - run: echo ${{ steps.plan.outputs.stdout }}
+      - run: echo ${{ steps.plan.outputs.stderr }}
+      - run: echo ${{ steps.plan.outputs.exitcode }}

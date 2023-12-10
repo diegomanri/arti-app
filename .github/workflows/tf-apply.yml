@@ -9,17 +9,27 @@ jobs:
     environment: production
 
     env:
+      # Any environment variables prefixed with TF_VAR_ are automatically read as Terraform variables.
       TF_VAR_ghcr_token: ${{ secrets.GHCR_TOKEN }}
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-    - name: Set up Terraform
-      uses: hashicorp/setup-terraform@v1
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
 
-    - name: Terraform Init
-      run: terraform init
+      - name: Terraform Init
+        run: |
+          terraform init \
+            -backend-config="bucket=${{ env.TF_STATE_S3_BUCKET }}" \
+            -backend-config="dynamodb_table=${{ env.TF_STATE_DYNAMODB_TABLE }}" \
+            -backend-config="region=us-east-1"
 
-    - name: Terraform Apply
-      run: terraform apply -auto-approve
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
+
+        # Output the standard output, error output, and exit code of the Terraform apply step
+      - run: echo "${{ steps.apply.outputs.stdout }}"
+      - run: echo "${{ steps.apply.outputs.stderr }}"
+      - run: echo "${{ steps.apply.outputs.exitcode }}"

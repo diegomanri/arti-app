@@ -1,0 +1,38 @@
+# Initial TF state setup architecture, to be run before tf-plan and tf-apply
+# Once you have the values of
+name: Terraform State Setup
+
+on:
+  workflow_dispatch:
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    environment: setup
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init
+        run: terraform init -chdir=terraform/state_setup
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve -chdir=terraform/state_setup
+
+        # Copy the variable names and outputs then add them to Github "Repository Variables"
+        # These variables will be used in the Plan and Apply workflows
+      - name: Set output values
+        run: |
+          echo "TF_STATE_S3_BUCKET=$(terraform output -raw s3_bucket_name)"
+          echo "TF_STATE_DYNAMODB_TABLE=$(terraform output -raw dynamodb_table_name)"
