@@ -21,13 +21,16 @@ jobs:
 
       - name: Terraform Init
         run: |
-          terraform init \
-            -backend-config="bucket=${{ env.TF_STATE_S3_BUCKET }}" \
-            -backend-config="dynamodb_table=${{ env.TF_STATE_DYNAMODB_TABLE }}" \
-            -backend-config="region=us-east-1"
+          terraform -chdir=terraform init \
+            -backend-config="bucket=${{ vars.TF_STATE_S3_BUCKET }}" \
+            -backend-config="dynamodb_table=${{ vars.TF_STATE_DYNAMODB_TABLE }}" \
+            -backend-config="region=us-east-1" \
+            -backend-config="encrypt=true" \
+            -backend-config="key=state/production/terraform.tfstate"
 
       - name: Terraform Apply
-        run: terraform apply -auto-approve
+        id: apply
+        run: terraform -chdir=terraform apply -auto-approve
 
         # Output the standard output, error output, and exit code of the Terraform apply step
       - run: echo "${{ steps.apply.outputs.stdout }}"
