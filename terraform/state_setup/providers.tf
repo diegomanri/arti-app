@@ -8,7 +8,7 @@ terraform {
   required_version = "~> 1.5"
 
   backend "s3" {
-    bucket         = "terraform-state-${random_string.bucket_suffix.result}"
+    bucket         = aws_s3_bucket.terraform_state.id
     key            = "state/production/terraform.tfstate"
     region         = "us-east-1"
     dynamodb_table = "terraform-state-lock"
