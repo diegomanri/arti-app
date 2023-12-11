@@ -33,4 +33,13 @@ resource "aws_ssm_parameter" "rds_db_name" {
   type  = "String"
   value = module.db.db_name
 }
+
 # GHCR Token
+resource "aws_secretsmanager_secret" "ghcr_token" {
+  name = "ghcr_token"
+}
+
+resource "aws_secretsmanager_secret_version" "ghcr_token" {
+  secret_id     = aws_secretsmanager_secret.ghcr_token.id
+  secret_string = var.ghcr_token
+}
