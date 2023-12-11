@@ -64,23 +64,6 @@ jobs:
             -backend-config="encrypt=true" \
             -backend-config="key=state/production/terraform.tfstate"
 
-        # Output the standard output, error output, and exit code of the Terraform init step
-      - run: echo ${{ steps.init.outputs.stdout }}
-      - run: echo ${{ steps.init.outputs.stderr }}
-      - run: echo ${{ steps.init.outputs.exitcode }}
-
-      #   - name: Terraform Plan
-      #     id: plan
-      #     run: terraform plan
-
-      #     # Output the standard output, error output, and exit code of the Terraform plan step
-      #   - run: echo ${{ steps.plan.outputs.stdout }}
-      #   - run: echo ${{ steps.plan.outputs.stderr }}
-      #   - run: echo ${{ steps.plan.outputs.exitcode }}
-
-      #   - name: Terraform Apply
-      #     run: terraform apply -auto-approve -chdir=terraform/state_setup
-
       # Copy the variable names and outputs then add them to Github "Repository Variables"
       # These variables will be used in the Plan and Apply workflows
       - name: Set output values
