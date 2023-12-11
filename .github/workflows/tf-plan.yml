@@ -35,7 +35,7 @@ jobs:
       # https://docs.github.com/en/actions/learn-github-actions/variables#using-the-vars-context-to-access-configuration-variable-values
       - name: Terraform Init
         run: |
-          terraform init \
+          terraform -chdir=terraform init \
             -backend-config="bucket=${{ env.TF_STATE_S3_BUCKET }}" \
             -backend-config="dynamodb_table=${{ env.TF_STATE_DYNAMODB_TABLE }}" \
             -backend-config="region=us-east-1"
