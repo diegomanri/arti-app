@@ -9,7 +9,7 @@ resource "random_string" "bucket_suffix" {
 
 # S3 Bucket for Terraform State
 resource "aws_s3_bucket" "terraform_state" {
-  bucket = "my-terraform-state-${random_string.bucket_suffix.result}"
+  bucket = "terraform-state-${random_string.bucket_suffix.result}"
 
   versioning {
     enabled = true
