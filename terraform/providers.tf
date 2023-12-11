@@ -1,7 +1,7 @@
 # Provider setup for the arti-app application infrastructure in AWS
 
 provider "aws" {
-  region = "us-east-1"
+  region = var.aws_region
 }
 
 terraform {
