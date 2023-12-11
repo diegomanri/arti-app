@@ -69,5 +69,5 @@ jobs:
       - name: Set output values
         run: |
           echo "These are the values you need to add to the Github Repository Variables"
-          echo "TF_STATE_S3_BUCKET=$(terraform output -raw s3_bucket_name)"
-          echo "TF_STATE_DYNAMODB_TABLE=$(terraform output -raw dynamodb_table_name)"
+          echo "TF_STATE_S3_BUCKET: ${{ env.TF_STATE_S3_BUCKET }}"
+          echo "TF_STATE_DYNAMODB_TABLE: ${{ env.TF_STATE_DYNAMODB_TABLE }}"
