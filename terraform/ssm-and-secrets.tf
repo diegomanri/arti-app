@@ -19,7 +19,7 @@ resource "aws_secretsmanager_secret_version" "rds_password" {
 resource "aws_ssm_parameter" "rds_username" {
   name  = "/finarticles/rds_username"
   type  = "String"
-  value = module.db.username
+  value = "produser"
 }
 
 resource "aws_ssm_parameter" "rds_host" {
@@ -31,7 +31,7 @@ resource "aws_ssm_parameter" "rds_host" {
 resource "aws_ssm_parameter" "rds_db_name" {
   name  = "/finarticles/rds_db_name"
   type  = "String"
-  value = module.db.db_name
+  value = "artiappdb"
 }
 
 # GHCR Token

@@ -10,9 +10,9 @@ module "db" {
   allocated_storage = 20
 
   # Database credentials and name
-  username = "produser"
+  username = aws_ssm_parameter.rds_username.value
   password = aws_secretsmanager_secret_version.rds_password.secret_string
-  db_name  = "artiappdb"
+  db_name  = aws_ssm_parameter.rds_db_name.value
   port     = "5432"
 
   # Networking and Security
