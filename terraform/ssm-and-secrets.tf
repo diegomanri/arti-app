@@ -23,9 +23,10 @@ resource "aws_ssm_parameter" "rds_username" {
 }
 
 resource "aws_ssm_parameter" "rds_host" {
-  name  = "/finarticles/rds_host"
-  type  = "String"
-  value = module.db.db_instance_address
+  name = "/finarticles/rds_host"
+  type = "String"
+  #value = module.db.db_instance_address
+  value = aws_db_instance.artiapp_db.address
 }
 
 resource "aws_ssm_parameter" "rds_db_name" {
