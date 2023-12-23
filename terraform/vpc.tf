@@ -107,34 +107,52 @@ module "alb" {
   name                       = "arti-app-alb"
   enable_deletion_protection = false
 
-  listeners = [
-    {
-      port               = 80
-      protocol           = "HTTP"
-      target_group_index = 0
-      default_action = {
-        type             = "forward"
-        target_group_arn = module.alb.target_groups["nginx_target_group"]["arn"]
-        # The below will be used once we have a certificate and HTTPS listener
-        # type = "redirect"
-        # redirect = {
-        #   port        = "443"
-        #   protocol    = "HTTPS"
-        #   status_code = "HTTP_301"
-        # }
+  listeners = {
+    http = {
+      port     = 80
+      protocol = "HTTP"
+      forward = {
+        target_group_key = "nginx_target_group"
+        stickiness = {
+          enabled = false
+        }
       }
-    } #,
-    # {
-    #   port               = 443
-    #   protocol           = "HTTPS"
+    }
+    # SEE HERE FOR 443 EXAMPLEs https://github.com/terraform-aws-modules/terraform-aws-alb/issues/330
+    # https = {
+    #   port     = 443
+    #   protocol = "HTTPS"
     #   target_group_index = 0
-    #   certificate_arn    = "arn:aws:acm:..." # Specify your ACM certificate ARN here
-    #   default_action = {
-    #     type             = "forward"
-    #     target_group_arn = module.alb.target_groups["nginx_target_group"]["arn"]
-    #   }
+    #   certificate_arn = "arn:aws:acm:us-east-1:123456789012:certificate/12345678-1234-1234-1234-123456789012"
     # }
-  ]
+  }
+  # https_listener = [
+  #   {
+  #     port               = 80
+  #     protocol           = "HTTP"
+  #     target_group_index = 0
+  # default_action = {
+  #   type             = "forward"
+  #   target_group_arn = module.alb.target_groups["nginx_target_group"]["arn"]
+  # The below will be used once we have a certificate and HTTPS listener
+  # type = "redirect"
+  # redirect = {
+  #   port        = "443"
+  #   protocol    = "HTTPS"
+  #   status_code = "HTTP_301"
+  # }
+  #}
+  #,
+  # {
+  #   port               = 443
+  #   protocol           = "HTTPS"
+  #   target_group_index = 0
+  #   certificate_arn    = "arn:aws:acm:..." # Specify your ACM certificate ARN here
+  #   default_action = {
+  #     type             = "forward"
+  #     target_group_arn = module.alb.target_groups["nginx_target_group"]["arn"]
+  #   }
+  # }
 
   target_groups = {
     nginx_target_group = {
