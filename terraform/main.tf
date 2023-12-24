@@ -68,6 +68,10 @@
 #   }
 # }
 
+terraform {
+  backend "local" {}
+}
+
 # DynamoDB Table for Terraform State Locking
 # resource "aws_dynamodb_table" "terraform_state_lock" {
 #   name         = "terraform-state-lock"
