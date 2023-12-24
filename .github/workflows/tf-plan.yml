@@ -47,9 +47,12 @@ jobs:
       - name: Terraform Plan
         id: plan
         run: terraform -chdir=terraform plan -input=false
-        continue-on-error: true
+        #continue-on-error: true
 
         # Output the standard output, error output, and exit code of the Terraform plan step
       - run: echo ${{ steps.plan.outputs.stdout }}
+        continue-on-error: true
       - run: echo ${{ steps.plan.outputs.stderr }}
+        continue-on-error: true
       - run: echo ${{ steps.plan.outputs.exitcode }}
+        continue-on-error: true
