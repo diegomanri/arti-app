@@ -16,7 +16,8 @@ RUN pip install pipenv pytest
 COPY Pipfile* ./
 
 # Generate requirements.txt from Pipfile.lock
-RUN pipenv lock -r > requirements.txt
+RUN pipenv -h
+RUN pipenv lock -r -v > requirements.txt
 
 # Install dependencies
 RUN pip install -r requirements.txt
