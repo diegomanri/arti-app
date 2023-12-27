@@ -14,7 +14,11 @@ WORKDIR /app
 RUN pip install --upgrade pip
 RUN pip install pipenv pytest
 COPY Pipfile* ./
-RUN pipenv lock --requirements > requirements.txt
+
+# Generate requirements.txt from Pipfile.lock
+RUN pipenv lock -r > requirements.txt
+
+# Install dependencies
 RUN pip install -r requirements.txt
 
 # Copy Pipfiles and install dependencies
