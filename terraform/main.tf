@@ -1,12 +1,20 @@
 # This file will be used to add resources in comments that we could use in the future
 # but are not required for the current project
 
+# Using a partial backend configuration as GH actions will add the rest of the configuration
+terraform {
+  backend "s3" {
+    region         = "us-east-1"
+    dynamodb_table = "terraform-state-lock"
+  }
+}
+
 # Attach policies to the IAM role/user/group as that will be used to run Terraform
 # Commenting out as the ACloudGuru Sandbox user should have the required permissions
 
 # IAM Policy for S3 Bucket Access
 # resource "aws_iam_policy" "terraform_state_s3" {
-#   name        = "TerraformStateS3Access"
+#   name        = "TerraformStateS3Access"git s
 #   description = "Policy to access the S3 bucket for Terraform State"
 
 #   policy = jsonencode({
