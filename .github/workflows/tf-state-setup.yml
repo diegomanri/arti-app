@@ -34,6 +34,9 @@ jobs:
             BUCKET_NAME="my-terraform-state-$UNIQUE_BUCKET_SUFFIX"
             aws s3 mb s3://$BUCKET_NAME --region us-east-1
             echo "TF_STATE_S3_BUCKET=$BUCKET_NAME" >> $GITHUB_ENV
+
+            # Enable versioning on the new S3 bucket
+            aws s3api put-bucket-versioning --bucket $BUCKET_NAME --versioning-configuration Status=Enabled
           fi
 
       - name: Create DynamoDB Table for Terraform State Locking
