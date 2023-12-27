@@ -1,24 +1,42 @@
+# Stage 1: Build stage
 # Use an official Python runtime as a parent image
-FROM python:3.10.11-slim-buster
-
-# Set the working directory in the container
-WORKDIR /app
+FROM python:3.10.11-slim-buster AS builder
 
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-# Copy the Pipfile and Pipfile.lock into the container at /app
-COPY Pipfile Pipfile.lock /app/
+# Set the working directory in the container
+# All subsequent commands will be run from this directory
+WORKDIR /app
 
-# Install Pipenv and project dependencies
-RUN pip install pipenv && pipenv install --deploy --ignore-pipfile
+# Install pipenv
+RUN pip install pipenv
 
-# Copy the current directory contents into the container at /app
-COPY . /app
+# Copy Pipfiles and install dependencies
+# Using transitioning from pipenv to pip to simplify the build process
+COPY Pipfile Pipfile.lock ./
+RUN pipenv lock --requirements > requirements.txt
+RUN pip install -r requirements.txt
+
+# old - Install Pipenv and project dependencies
+# old - RUN pip install pipenv && pipenv install --deploy --ignore-pipfile
+
+# Copy the current directory contents into the container
+COPY . .
 
 # Collect static files
-RUN pipenv run python manage.py collectstatic --noinput
+# old - RUN pipenv run python manage.py collectstatic --noinput
+RUN python manage.py collectstatic --noinput
+
+# Stage 2: Run stage
+FROM python:3.10.11-slim-buster
+
+WORKDIR /app
+
+# Copy only necessary files from the builder stage
+COPY --from=builder /app .
 
 # Run the application
-CMD ["pipenv", "run", "gunicorn", "--bind", "0.0.0.0:8001", "finarticles.wsgi:application"]
+# old - CMD ["pipenv", "run", "gunicorn", "--bind", "0.0.0.0:8001", "finarticles.wsgi:application"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8001", "finarticles.wsgi:application"]

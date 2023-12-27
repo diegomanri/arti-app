@@ -64,7 +64,7 @@ resource "aws_ecs_task_definition" "arti_app" {
   container_definitions = jsonencode([
     {
       name  = "nginx"
-      image = "ghcr.io/yourusername/nginx-container:latest" # Update with your GHCR image URL
+      image = "ghcr.io/diegomanri/arti-app/nginx:latest" # Update with your GHCR image URL
       portMappings = [
         {
           containerPort = 8000
@@ -82,7 +82,7 @@ resource "aws_ecs_task_definition" "arti_app" {
     },
     {
       name  = "django"
-      image = "ghcr.io/yourusername/django-container:latest" # Update with your GHCR image URL
+      image = "ghcr.io/diegomanri/arti-app/django:latest" # Update with your GHCR image URL
       portMappings = [
         {
           containerPort = 8001
