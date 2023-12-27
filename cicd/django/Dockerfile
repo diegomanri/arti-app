@@ -10,14 +10,18 @@ ENV PYTHONUNBUFFERED 1
 # All subsequent commands will be run from this directory
 WORKDIR /app
 
-# Install pipenv
-RUN pip install pipenv
+# install python dependencies
+RUN pip install --upgrade pip
+RUN pip install pipenv pytest
+COPY Pipfile* ./
+RUN pipenv lock --requirements > requirements.txt
+RUN pip install -r requirements.txt
 
 # Copy Pipfiles and install dependencies
 # Using transitioning from pipenv to pip to simplify the build process
-COPY Pipfile Pipfile.lock ./
-RUN pipenv lock -r > requirements.txt
-RUN pip install -r requirements.txt
+# COPY Pipfile Pipfile.lock ./
+# RUN pipenv lock --requirements > requirements.txt
+# RUN pip install -r requirements.txt
 
 # old - Install Pipenv and project dependencies
 # old - RUN pip install pipenv && pipenv install --deploy --ignore-pipfile
