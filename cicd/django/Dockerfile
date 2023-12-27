@@ -16,7 +16,7 @@ RUN pip install pipenv
 # Copy Pipfiles and install dependencies
 # Using transitioning from pipenv to pip to simplify the build process
 COPY Pipfile Pipfile.lock ./
-RUN pipenv lock --requirements > requirements.txt
+RUN pipenv lock -r > requirements.txt
 RUN pip install -r requirements.txt
 
 # old - Install Pipenv and project dependencies
