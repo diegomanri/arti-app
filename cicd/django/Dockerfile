@@ -17,7 +17,7 @@ COPY Pipfile* ./
 
 # Generate requirements.txt from Pipfile.lock
 RUN pipenv -h
-RUN pipenv lock -r -v > requirements.txt
+RUN pipenv requirements > requirements.txt
 
 # Install dependencies
 RUN pip install -r requirements.txt
