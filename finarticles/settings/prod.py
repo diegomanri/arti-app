@@ -10,12 +10,13 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['example.com']
+# Using a wildcard for now, until I can get a domain name
+ALLOWED_HOSTS = ['*']
 
 # Serving static files from S3
 STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
-AWS_S3_REGION_NAME = os.environ.get('AWS_S3_REGION_NAME')  # e.g., 'us-west-2'
+AWS_STORAGE_BUCKET_NAME = 'artiapp-staticfiles-bucket'
+AWS_S3_REGION_NAME = 'us-east-1'
 
 # Fetching database credentials
 db_username = get_parameter('rds_username')

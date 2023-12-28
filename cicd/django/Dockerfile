@@ -6,6 +6,18 @@ FROM python:3.10.11-slim-buster AS builder
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
+# Accept AWS credentials as build arguments
+# These are coming from GitHub secrets
+ARG DTEST_AWS_KEY_ID
+ARG DTEST_AWS_KEY_SECRET
+
+# Set the environment variables
+ENV AWS_ACCESS_KEY_ID=${DTEST_AWS_KEY_ID}
+ENV AWS_SECRET_ACCESS_KEY=${DTEST_AWS_KEY_SECRET}
+
+# Set Django settings module for production
+ENV DJANGO_SETTINGS_MODULE=finarticles.settings.prod
+
 # Set the working directory in the container
 # All subsequent commands will be run from this directory
 WORKDIR /app
