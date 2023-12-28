@@ -34,6 +34,7 @@ jobs:
           build-args: |
             DTEST_AWS_KEY_ID=${{ secrets.DTEST_AWS_KEY_ID }}
             DTEST_AWS_KEY_SECRET=${{ secrets.DTEST_AWS_KEY_SECRET }}
+            PROD_DJANGO_KEY=${{ secrets.PROD_DJANGO_KEY }}
 
       - name: Build and push Nginx Image
         uses: docker/build-push-action@v2
