@@ -100,6 +100,10 @@ jobs:
           name: tfplan
           path: terraform
 
+      - name: List directory contents before apply
+        working-directory: terraform
+        run: ls -alh
+
       - name: Terraform Apply
         id: apply
         env:
@@ -108,5 +112,6 @@ jobs:
           TF_VAR_db_password: ${{ secrets.DTEST_DB_PASSWORD }}
           TF_VAR_db_host: ${{ vars.DTEST_DB_HOST }}
           TF_VAR_db_name: ${{ vars.DTEST_DB_NAME }}
+          TF_LOG: DEBUG
         working-directory: terraform
-        run: terraform apply tfplan -auto-approve -input=false
+        run: terraform apply -auto-approve -input=false tfplan
