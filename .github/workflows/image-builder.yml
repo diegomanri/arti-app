@@ -24,6 +24,13 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GHCR_TOKEN }}
 
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.DTEST_AWS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.DTEST_AWS_KEY_SECRET }}
+          aws-region: us-east-1
+
       - name: Build and Push Django Image
         uses: docker/build-push-action@v2
         with:
@@ -34,7 +41,10 @@ jobs:
           build-args: |
             DTEST_AWS_KEY_ID=${{ secrets.DTEST_AWS_KEY_ID }}
             DTEST_AWS_KEY_SECRET=${{ secrets.DTEST_AWS_KEY_SECRET }}
-            PROD_DJANGO_KEY=${{ secrets.PROD_DJANGO_KEY }}
+            PROD_DJANGO_SECRET_KEY=${{ secrets.PROD_DJANGO_KEY }}
+            DTEST_DB_USER=${{ secrets.DTEST_DB_USER }}
+            DTEST_DB_PASSWORD=${{ secrets.DTEST_DB_PASSWORD }}
+            DTEST_DB_NAME=${{ vars.DTEST_DB_NAME }}
 
       - name: Build and push Nginx Image
         uses: docker/build-push-action@v2

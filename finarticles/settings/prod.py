@@ -19,10 +19,10 @@ AWS_STORAGE_BUCKET_NAME = 'artiapp-staticfiles-bucket'
 AWS_S3_REGION_NAME = 'us-east-1'
 
 # Fetching database credentials
-db_username = get_parameter('rds_username')
-db_password = get_secret('rds_password')
-db_host = get_parameter('rds_host')
-db_name = get_parameter('rds_db_name')
+db_username = os.environ.get('DTEST_DB_USER')
+db_password = os.environ.get('DTEST_DB_PASSWORD')
+db_host = os.environ.get('DTEST_DB_HOST')
+db_name = os.environ.get('DTEST_DB_NAME')
 
 # Configure DATABASES setting
 DATABASES = {

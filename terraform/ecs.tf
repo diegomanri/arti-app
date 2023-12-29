@@ -91,22 +91,26 @@ resource "aws_ecs_task_definition" "arti_app" {
       ],
       environment = [
         {
+          name  = "PROD_DJANGO_SECRET_KEY",
+          value = var.prod_django_secret_key
+        },
+        {
           name  = "DATABASE_USERNAME",
-          value = aws_ssm_parameter.rds_username.value
+          value = var.db_user
         },
         {
           name  = "DATABASE_HOST",
-          value = aws_ssm_parameter.rds_host.value
+          value = aws_db_instance.artiapp_db.endpoint
         },
         {
           name  = "DATABASE_NAME",
-          value = aws_ssm_parameter.rds_db_name.value
+          value = var.db_name
         }
       ],
       secrets = [
         {
           name      = "DATABASE_PASSWORD",
-          valueFrom = aws_secretsmanager_secret.rds_password.arn
+          valueFrom = var.db_password
         }
       ],
       logConfiguration = {

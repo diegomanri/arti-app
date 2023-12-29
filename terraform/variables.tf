@@ -9,3 +9,10 @@ variable "aws_region" {
   type        = string
   default     = "us-east-1"
 }
+
+# The following are empty now because I want to apply them from Github Secrets
+variable "db_user" {}
+variable "db_password" {}
+variable "db_host" {}
+variable "db_name" {}
+variable "prod_django_secret_key" {}

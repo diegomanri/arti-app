@@ -7,7 +7,7 @@ resource "aws_db_instance" "artiapp_db" {
   allocated_storage = 20
 
   # Database credentials and name
-  username = "produser"
+  username = var.db_user
   password = aws_secretsmanager_secret_version.rds_password.secret_string
   port     = 5432
 

@@ -11,11 +11,19 @@ ENV PYTHONUNBUFFERED 1
 ARG DTEST_AWS_KEY_ID
 ARG DTEST_AWS_KEY_SECRET
 ARG PROD_DJANGO_KEY
+ARG DTEST_DB_USER
+ARG DTEST_DB_PASSWORD
+#ARG DTEST_DB_HOST # I need to get this value at runtime
+ARG DTEST_DB_NAME
 
 # Set the environment variables
 ENV PROD_DJANGO_SECRET_KEY=${PROD_DJANGO_KEY}
 ENV AWS_ACCESS_KEY_ID=${DTEST_AWS_KEY_ID}
 ENV AWS_SECRET_ACCESS_KEY=${DTEST_AWS_KEY_SECRET}
+ENV DB_USER=${DTEST_DB_USER}
+ENV DB_PASSWORD=${DTEST_DB_PASSWORD}
+# ENV DB_HOST=${DTEST_DB_HOST} # I need to get this value at runtime
+ENV DB_NAME=${DTEST_DB_NAME}
 
 # Set Django settings module for production
 ENV DJANGO_SETTINGS_MODULE=finarticles.settings.prod
@@ -30,20 +38,10 @@ RUN pip install pipenv pytest
 COPY Pipfile* ./
 
 # Generate requirements.txt from Pipfile.lock
-RUN pipenv -h
 RUN pipenv requirements > requirements.txt
 
 # Install dependencies
 RUN pip install -r requirements.txt
-
-# Copy Pipfiles and install dependencies
-# Using transitioning from pipenv to pip to simplify the build process
-# COPY Pipfile Pipfile.lock ./
-# RUN pipenv lock --requirements > requirements.txt
-# RUN pip install -r requirements.txt
-
-# old - Install Pipenv and project dependencies
-# old - RUN pip install pipenv && pipenv install --deploy --ignore-pipfile
 
 # Copy the current directory contents into the container
 COPY . .
