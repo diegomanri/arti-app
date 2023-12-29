@@ -59,7 +59,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: tfplan
-          path: tfplan
+          path: terraform/tfplan
 
         # Output the standard output, error output, and exit code of the Terraform plan step
       - run: echo ${{ steps.plan.outputs.stdout }}
