@@ -8,7 +8,8 @@ resource "aws_db_instance" "artiapp_db" {
 
   # Database credentials and name
   username = var.db_user
-  password = aws_secretsmanager_secret_version.rds_password.secret_string
+  #password = aws_secretsmanager_secret_version.rds_password.secret_string
+  password = var.db_password
   port     = 5432
 
   # Networking and Security
