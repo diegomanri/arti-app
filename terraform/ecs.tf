@@ -105,12 +105,10 @@ resource "aws_ecs_task_definition" "arti_app" {
         {
           name  = "DATABASE_NAME",
           value = var.db_name
-        }
-      ],
-      secrets = [
+        },
         {
-          name      = "DATABASE_PASSWORD",
-          valueFrom = var.db_password
+          name  = "DATABASE_PASSWORD",
+          value = var.db_password
         }
       ],
       logConfiguration = {
@@ -171,44 +169,44 @@ data "aws_iam_policy_document" "ecs_task_assume_role" {
 }
 
 # IAM Policy Document for ECS Task Execution: Define necessary permissions
-data "aws_iam_policy_document" "ecs_task_execution_role_policy" {
-  # Updated to include SSM and/or Secrets Manager permissions
-  statement {
-    actions = [
-      "ssm:GetParameters",             # For SSM parameters
-      "secretsmanager:GetSecretValue", # For Secrets Manager
-      "ecr:GetAuthorizationToken",
-      "ecr:BatchCheckLayerAvailability",
-      "ecr:GetDownloadUrlForLayer",
-      "ecr:BatchGetImage",
-      "logs:CreateLogStream",
-      "logs:PutLogEvents"
-    ]
-    resources = [
-      # Specify the resources for SSM and Secrets Manager here, use * for all or restrict as needed
-      # "arn:aws:ssm:${var.aws_region}:${data.aws_caller_identity.current.account_id}:parameter/*",
-      # "arn:aws:secretsmanager:${var.aws_region}:${data.aws_caller_identity.current.account_id}:secret:*"
-      "*" # For all resources (for now as I am troubleshooting)
-    ]
-  }
-}
+# data "aws_iam_policy_document" "ecs_task_execution_role_policy" {
+#   # Updated to include SSM and/or Secrets Manager permissions
+#   statement {
+#     actions = [
+#       "ssm:GetParameters",             # For SSM parameters
+#       "secretsmanager:GetSecretValue", # For Secrets Manager
+#       "ecr:GetAuthorizationToken",
+#       "ecr:BatchCheckLayerAvailability",
+#       "ecr:GetDownloadUrlForLayer",
+#       "ecr:BatchGetImage",
+#       "logs:CreateLogStream",
+#       "logs:PutLogEvents"
+#     ]
+#     resources = [
+#       # Specify the resources for SSM and Secrets Manager here, use * for all or restrict as needed
+#       # "arn:aws:ssm:${var.aws_region}:${data.aws_caller_identity.current.account_id}:parameter/*",
+#       # "arn:aws:secretsmanager:${var.aws_region}:${data.aws_caller_identity.current.account_id}:secret:*"
+#       "*" # For all resources (for now as I am troubleshooting)
+#     ]
+#   }
+# }
 
 # Normally we'd prefer not to hardcode an ARN in our Terraform, but since this is an AWS-managed
 # policy, it's okay.
-# data "aws_iam_policy" "ecs_task_execution_role" {
-#   arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
-# }
-
-resource "aws_iam_policy" "ecs_task_execution_policy" {
-  name   = "arti-app-task-execution-policy"
-  policy = data.aws_iam_policy_document.ecs_task_execution_role_policy.json
+data "aws_iam_policy" "ecs_task_execution_policy" {
+  arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
+
+# resource "aws_iam_policy" "ecs_task_execution_policy" {
+#   name   = "arti-app-task-execution-policy"
+#   policy = data.aws_iam_policy_document.ecs_task_execution_role_policy.json
+# }
 
 # Attach the above policy to the execution role.
 resource "aws_iam_role_policy_attachment" "ecs_task_execution_role" {
-  role = aws_iam_role.arti_app_task_execution_role.name
-  #policy_arn = data.aws_iam_policy.ecs_task_execution_role.arn
-  policy_arn = aws_iam_policy.ecs_task_execution_policy.arn
+  role       = aws_iam_role.arti_app_task_execution_role.name
+  policy_arn = data.aws_iam_policy.ecs_task_execution_policy.arn
+  #policy_arn = aws_iam_policy.ecs_task_execution_policy.arn
 }
 # Some of this below comes from vpc.tf already, some other things I don't want to implement yet
 # Like the certificate and the domain name.
