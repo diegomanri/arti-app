@@ -36,11 +36,24 @@
 # }
 
 # GHCR Token
-resource "aws_secretsmanager_secret" "ghcr_token" {
-  name = "ghcr_token"
+# resource "aws_secretsmanager_secret" "ghcr_token" {
+#   name = "ghcr_token"
+# }
+
+# resource "aws_secretsmanager_secret_version" "ghcr_token" {
+#   secret_id     = aws_secretsmanager_secret.ghcr_token.id
+#   secret_string = var.ghcr_token
+# }
+
+resource "aws_secretsmanager_secret" "ghcr_credentials" {
+  name        = "ghcr_credentials"
+  description = "Credentials for GHCR"
 }
 
-resource "aws_secretsmanager_secret_version" "ghcr_token" {
-  secret_id     = aws_secretsmanager_secret.ghcr_token.id
-  secret_string = var.ghcr_token
+resource "aws_secretsmanager_secret_version" "ghcr_credentials" {
+  secret_id = aws_secretsmanager_secret.ghcr_credentials.id
+  secret_string = jsonencode({
+    username = var.ghcr_user
+    password = var.ghcr_token
+  })
 }

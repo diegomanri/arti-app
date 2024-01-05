@@ -11,6 +11,7 @@ jobs:
     env:
       # Any environment variables prefixed with TF_VAR_ are automatically read as Terraform variables.
       TF_VAR_ghcr_token: ${{ secrets.GHCR_TOKEN }}
+      TF_VAR_ghcr_user: ${{ secrets.GHCR_USER }}
 
     steps:
       - name: Checkout repository

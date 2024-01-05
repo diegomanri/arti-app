@@ -64,7 +64,10 @@ resource "aws_ecs_task_definition" "arti_app" {
   container_definitions = jsonencode([
     {
       name  = "nginx"
-      image = "ghcr.io/diegomanri/arti-app/nginx:latest" # Update with your GHCR image URL
+      image = "ghcr.io/diegomanri/arti-app/nginx:latest",
+      "repositoryCredentials" : {
+        "credentialsParameter" : aws_secretsmanager_secret.ghcr_credentials.arn
+      }
       portMappings = [
         {
           containerPort = 8000
@@ -82,7 +85,10 @@ resource "aws_ecs_task_definition" "arti_app" {
     },
     {
       name  = "django"
-      image = "ghcr.io/diegomanri/arti-app/django:latest" # Update with your GHCR image URL
+      image = "ghcr.io/diegomanri/arti-app/django:latest",
+      "repositoryCredentials" : {
+        "credentialsParameter" : aws_secretsmanager_secret.ghcr_credentials.arn
+      }
       portMappings = [
         {
           containerPort = 8001
@@ -169,44 +175,44 @@ data "aws_iam_policy_document" "ecs_task_assume_role" {
 }
 
 # IAM Policy Document for ECS Task Execution: Define necessary permissions
-# data "aws_iam_policy_document" "ecs_task_execution_role_policy" {
-#   # Updated to include SSM and/or Secrets Manager permissions
-#   statement {
-#     actions = [
-#       "ssm:GetParameters",             # For SSM parameters
-#       "secretsmanager:GetSecretValue", # For Secrets Manager
-#       "ecr:GetAuthorizationToken",
-#       "ecr:BatchCheckLayerAvailability",
-#       "ecr:GetDownloadUrlForLayer",
-#       "ecr:BatchGetImage",
-#       "logs:CreateLogStream",
-#       "logs:PutLogEvents"
-#     ]
-#     resources = [
-#       # Specify the resources for SSM and Secrets Manager here, use * for all or restrict as needed
-#       # "arn:aws:ssm:${var.aws_region}:${data.aws_caller_identity.current.account_id}:parameter/*",
-#       # "arn:aws:secretsmanager:${var.aws_region}:${data.aws_caller_identity.current.account_id}:secret:*"
-#       "*" # For all resources (for now as I am troubleshooting)
-#     ]
-#   }
-# }
+data "aws_iam_policy_document" "ecs_task_execution_role_policy" {
+  # Updated to include SSM and/or Secrets Manager permissions
+  statement {
+    actions = [
+      "secretsmanager:GetSecretValue", # For Secrets Manager
+      "kms:Decrypt",                   # To decrypt the secret
+      "ecr:GetAuthorizationToken",
+      "ecr:BatchCheckLayerAvailability",
+      "ecr:GetDownloadUrlForLayer",
+      "ecr:BatchGetImage",
+      "logs:CreateLogStream",
+      "logs:PutLogEvents"
+    ]
+    resources = [
+      # Specify the resources for SSM and Secrets Manager here, use * for all or restrict as needed
+      # "arn:aws:ssm:${var.aws_region}:${data.aws_caller_identity.current.account_id}:parameter/*",
+      # "arn:aws:secretsmanager:${var.aws_region}:${data.aws_caller_identity.current.account_id}:secret:*"
+      "*" # For all resources (for now as I am troubleshooting)
+    ]
+  }
+}
 
 # Normally we'd prefer not to hardcode an ARN in our Terraform, but since this is an AWS-managed
 # policy, it's okay.
-data "aws_iam_policy" "ecs_task_execution_policy" {
-  arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
-}
-
-# resource "aws_iam_policy" "ecs_task_execution_policy" {
-#   name   = "arti-app-task-execution-policy"
-#   policy = data.aws_iam_policy_document.ecs_task_execution_role_policy.json
+# data "aws_iam_policy" "ecs_task_execution_policy" {
+#   arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 # }
+
+resource "aws_iam_policy" "ecs_task_execution_policy" {
+  name   = "arti-app-task-execution-policy"
+  policy = data.aws_iam_policy_document.ecs_task_execution_role_policy.json
+}
 
 # Attach the above policy to the execution role.
 resource "aws_iam_role_policy_attachment" "ecs_task_execution_role" {
-  role       = aws_iam_role.arti_app_task_execution_role.name
-  policy_arn = data.aws_iam_policy.ecs_task_execution_policy.arn
-  #policy_arn = aws_iam_policy.ecs_task_execution_policy.arn
+  role = aws_iam_role.arti_app_task_execution_role.name
+  #policy_arn = data.aws_iam_policy.ecs_task_execution_policy.arn
+  policy_arn = aws_iam_policy.ecs_task_execution_policy.arn
 }
 # Some of this below comes from vpc.tf already, some other things I don't want to implement yet
 # Like the certificate and the domain name.

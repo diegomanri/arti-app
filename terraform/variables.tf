@@ -4,6 +4,13 @@ variable "ghcr_token" {
   sensitive   = true
 }
 
+variable "ghcr_user" {
+  description = "Username for GitHub Container Registry coming from GH Secrets"
+  type        = string
+  sensitive   = true
+}
+
+
 variable "aws_region" {
   description = "AWS region for the provider"
   type        = string
