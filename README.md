@@ -1,4 +1,5 @@
 # arti-app
+I'm just practicing parsing JSON data into a web application. Then, I'll package the app into an image and deploy it to AWS using Terraform and GitHub Actions.
 
 ## Local Dev Deployment
 
